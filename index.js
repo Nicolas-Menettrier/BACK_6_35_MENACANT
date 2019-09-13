@@ -18,6 +18,7 @@ const typeDefs = gql`
     name: String
     age: Int
     books: [Book]
+    id: Int
   }
 
   # The "Query" type is special: it lists all of the available queries that
@@ -26,7 +27,7 @@ const typeDefs = gql`
   type Query {
     books: [Book]
     authors: [Author]
-    author: Author
+    author(id: Int): Author
   }
 `;
 
@@ -44,11 +45,13 @@ const books = [
 const authors = [
   {
     name: 'J.K. Rowling',
-    age: '50'
+    age: 50,
+    id: 1
   },
   {
     name: 'Michael Crichton',
-    age: '70'
+    age: 70,
+    id: 2,
   }
 ];
 
@@ -56,10 +59,10 @@ const resolvers = {
    Query: {
      books: () => books,
      authors: () => authors,
-     author: (parent, args, context, info) => _.filter(authors, {  })
+     author: (parent, args, context, info) => _.find(authors, { id: args.id })
    },
    Author: {
-     books: (author) => _.find(books, { name: author.name })
+     books: (author) => _.filter(books, { author: author.name })
    }
 };
 
