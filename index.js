@@ -1,9 +1,8 @@
-const { ApolloServer, gql } = require('apollo-server');
-const _ = require('lodash');
+const { ApolloServer, gql } = require("apollo-server");
+const _ = require("lodash");
 
-
-// A schema is a collection of type definitions (hence "typeDefs") 
-// that together define the "shape" of queries that are executed against 
+// A schema is a collection of type definitions (hence "typeDefs")
+// that together define the "shape" of queries that are executed against
 // your data.
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -32,43 +31,43 @@ const typeDefs = gql`
 `;
 
 const books = [
-    {
-      title: 'Harry Potter and the Chamber of Secrets',
-      author: 'J.K. Rowling',
-    },
-    {
-      title: 'Jurassic Park',
-      author: 'Michael Crichton',
-    },
-  ];
+  {
+    title: "Harry Potter and the Chamber of Secrets",
+    author: "J.K. Rowling"
+  },
+  {
+    title: "Jurassic Park",
+    author: "Michael Crichton"
+  }
+];
 
 const authors = [
   {
-    name: 'J.K. Rowling',
+    name: "J.K. Rowling",
     age: 50,
     id: 1
   },
   {
-    name: 'Michael Crichton',
+    name: "Michael Crichton",
     age: 70,
-    id: 2,
+    id: 2
   }
 ];
 
 const resolvers = {
-   Query: {
-     books: () => books,
-     authors: () => authors,
-     author: (parent, args, context, info) => _.find(authors, { id: args.id })
-   },
-   Author: {
-     books: (author) => _.filter(books, { author: author.name })
-   }
+  Query: {
+    books: () => books,
+    authors: () => authors,
+    author: (parent, args, context, info) => _.find(authors, { id: args.id })
+  },
+  Author: {
+    books: author => _.filter(books, { author: author.name })
+  }
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-  // The `listen` method launches a web server.
+// The `listen` method launches a web server.
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
