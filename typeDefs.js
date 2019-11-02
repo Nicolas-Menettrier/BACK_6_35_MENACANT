@@ -43,6 +43,7 @@ const typeDefs = gql`
 
   type Query {
     user(id: Int): User!
+    search(search: String!, size: Int): [User]!
     post(id: Int!): Post!
     posts(userId: Int): [Post]!
     all(userId: Int): [Post]!

@@ -20,6 +20,11 @@ const resolvers = {
                 return user;
             }
             return context.user;
+        },
+
+        search: (parent, { search, size }, context) => {
+            search = search.toLowerCase();
+            return users.filter(user => user.username.toLowerCase().includes(search)).slice(0, size ? size : 5);
         }
     },
 
