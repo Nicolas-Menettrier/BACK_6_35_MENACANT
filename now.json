@@ -3,12 +3,11 @@
     "version": 2,
     "builds": [
         {
-            "src": "/**.js /resolver/**.js /database/**.js",
+            "src": "/**.js",
             "use": "@now/node-server"
         }
     ],
     "env": {
-        "MONGODB_URI": "@my-mongodb-uri",
-        "API_PORT": 4000
+        "API_PORT": "8080"
     }
 }

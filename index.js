@@ -52,7 +52,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app });
 
-const port = process.env.API_PORT || 4000;
+const port = process.env.API_PORT || 8080;
 
 app.listen({ port }, () => {
     console.log(`Listening on port ${port}`);
