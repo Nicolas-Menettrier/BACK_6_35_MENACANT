@@ -4,6 +4,7 @@ const database = {
             'id': 0,
             'username': 'arnaud',
             'email': 'arnaud.pinta@gmail.com',
+            'description': 'je m\'appelle arnaud et j\'ai 12 ans',
             'password': 'azerty',
             'mode': 0
         },
@@ -11,6 +12,7 @@ const database = {
             'id': 1,
             'username': 'thomas',
             'email': 'thomas.pinta@gmail.com',
+            'description': 'thomas pinta\n20 ans',
             'password': 'qsdfgh',
             'mode': 0
         },
@@ -18,6 +20,7 @@ const database = {
             'id': 2,
             'username': 'julien',
             'email': 'pintajulien@gmail.com',
+            'description': 'french artist',
             'password': 'wxcvbn',
             'mode': 0
         }
@@ -94,6 +97,21 @@ const database = {
             'id': 0,
             'post': 0,
             'user': 1
+        },
+        {
+            'id': 1,
+            'post': 0,
+            'user': 1
+        },
+        {
+            'id': 2,
+            'post': 0,
+            'user': 2
+        },
+        {
+            'id': 3,
+            'post': 0,
+            'user': 2
         }
     ]
 };

@@ -1,4 +1,5 @@
-let { users, posts, follows } = require('../database/database');
+let { users, posts } = require('../database/database');
+const getPermission = require('../permissions');
 
 const resolvers = {
     Mutation: {
@@ -7,8 +8,9 @@ const resolvers = {
             if (!post) throw new Error('post not found');
             const user = users.find(user => user.id === post.user); // TODO REPLACE BY REAL DB
             if (!user) throw new Error('internal server error');
-            if (!post.comments || (user.id !== context.user.id && post.mode === 1 && !follows.find(follow => follow.followed === user.id && follow.follower === context.user.id)))
-                throw new Error('not allowed');
+            if (!post.comments) throw new Error('comments are not allowed');
+            getPermission(context.user, user, post);
+            if (message.length > 256) throw new Error('message must be at max 256 caracters long');
             const comment = {
                 'id': posts[posts.length - 1].id + 1,
                 'message': message,
@@ -17,7 +19,6 @@ const resolvers = {
                 'comments': true,
                 'mode': 0
             };
-            console.table(comment);
             posts.push(comment); // TODO REPLACE BY REAL DB
             return comment;
         }
@@ -29,26 +30,30 @@ const resolvers = {
             if (!comment) throw new Error('not found');
             const user = users.find(user => user.id === comment.user);
             if (!user) throw new Error('internal server error');
-            if (user.id !== context.user.id && comment.mode === 1 && !follows.find(follow => follow.followed === user.id && follow.follower === context.user.id))
-                throw new Error('not allowed');
+            getPermission(context.user, user, comment);
             return comment;
         },
 
         comments: (parent, { userId, postId }, context) => {
             if (userId !== undefined && postId !== undefined) {
                 const user = users.find(user => user.id === userId);
-                const post = posts.find(post => post.id === postId);
                 if (!user) throw new Error('user not found');
+                const post = posts.find(post => post.id === postId);
                 if (!post) throw new Error('post not found');
+                getPermission(context.user, user, post);
                 return posts.filter(post => post.post !== null && post.id === postId && post.user === userId);
             } else if (userId !== undefined) {
                 const user = users.find(user => user.id === userId);
                 if (!user) throw new Error('user not found');
+                getPermission(context.user, user);
                 return posts.filter(post => post.post !== null && post.user === userId);
             } else if (postId !== undefined) {
                 const post = posts.find(post => post.id === postId);
                 if (!post) throw new Error('post not found');
-                return posts.filter(post => post.post !== null && post.id === postId);
+                const user = users.find(user => user.id === post.user);
+                if (!user) throw new Error('user not found');
+                getPermission(context.user, user, post);
+                return posts.filter(post => post.post === post.id);
             } else {
                 return posts.filter(post => post.post !== null && post.user === context.user.id);
             }
@@ -62,8 +67,11 @@ const resolvers = {
             if (!post) throw new Error('post was removed');
             const user = users.find(user => user.id === post.user);
             if (!user) throw new Error('internal server error');
-            if (context.user.id !== user.id && (user.mode === 1 || post.mode === 1) && !follows.find(follow => follow.followed === user.id && follow.follower === context.user.id))
+            try {
+                getPermission(context.user, user, post);
+            } catch (error) {
                 return null;
+            }
             return post;
         }
     }

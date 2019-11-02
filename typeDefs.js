@@ -5,6 +5,8 @@ const typeDefs = gql`
     id: Int!
     email: String!
     username: String!
+    description: String
+    all: [Post]
     posts: [Post]
     comments: [Post]
     mode: Int!
@@ -17,6 +19,17 @@ const typeDefs = gql`
     post: Post
     comments: [Post]
     mode: Int!
+    likes: Liked
+  }
+
+  type Likes {
+    count: Int!
+    posts: [Post]
+  }
+
+  type Liked {
+    count: Int!
+    users: [User]
   }
 
   type Like {
@@ -33,7 +46,9 @@ const typeDefs = gql`
 
   type Mutation {
     mode: User!
+    description(description: String!): User!
     post(message: String!, mode: Int, comments: Boolean): Post!
+    removePost(id: Int!): Post!
     comment(postId: Int!, message: String!): Post!
     like(postId: Int!): Like!
     unlike(postId: Int!): Like!
@@ -49,8 +64,8 @@ const typeDefs = gql`
     all(userId: Int): [Post]!
     comment(id: Int!): Post!
     comments(userId: Int, postId: Int): [Post]!
-    likes(userId: Int): [Post]!
-    liked(postId: Int): [User]!
+    likes(userId: Int): Likes!
+    liked(postId: Int): Liked!
     follows(userId: Int): [User]!
     followers(userId: Int): [User]!
   }

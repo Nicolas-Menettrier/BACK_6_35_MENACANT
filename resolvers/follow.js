@@ -1,4 +1,5 @@
 let { users, follows } = require('../database/database');
+const getPermission = require('../permissions');
 
 const resolvers = {
     Mutation: {
@@ -31,8 +32,7 @@ const resolvers = {
             if (userId !== undefined) {
                 const user = users.find(user => user.id === userId); // TODO REPLACE BY REAL DB
                 if (!user) throw new Error('user not found');
-                if (user.id !== context.user.id && user.mode === 1 && !follows.find(follow => follow.followed === user.id && follow.follower === context.user.id))
-                    throw new Error('not allowed');
+                getPermission(context.user, user);
                 return users.filter(u => follows.find(follow => follow.followed === u.id && follow.follower === user.id));
             }
             return users.filter(user => follows.find(follow => follow.followed === user.id && follow.follower === context.user.id));
@@ -42,8 +42,7 @@ const resolvers = {
             if (userId !== undefined) {
                 const user = users.find(user => user.id === userId); // TODO REPLACE BY REAL DB
                 if (!user) throw new Error('user not found');
-                if (user.id !== context.user.id && user.mode === 1 && !follows.find(follow => follow.followed === user.id && follow.follower === context.user.id))
-                    throw new Error('not allowed');
+                getPermission(context.user, user);
                 return users.filter(u => follows.find(follow => follow.followed === user.id && follow.follower === u.id));
             }
             return users.filter(user => follows.find(follow => follow.followed === context.user.id && follow.follower === user.id));

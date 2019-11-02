@@ -9,6 +9,8 @@ const resolvers = require('./resolvers/resolvers');
 let database = require('./database/database');
 
 const app = express();
+const secret = Date.now().toString();
+
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -17,7 +19,7 @@ app.post('/api/authentication', (req, res) => {
     if (!email || !password) return res.status(400).json({ message: 'body values are incorrect' });
     const user = database.users.find(user => user.email === email && user.password === password);
     if (!user) return res.status(401).json({ message: 'wrong email or password' });
-    const token = jwt.sign(user, 'my-secret-from-env-file-in-prod', { expiresIn: '1200s' });
+    const token = jwt.sign(user, secret, { expiresIn: '1200s' });
     return res.json({ token });
 });
 
@@ -42,7 +44,7 @@ const server = new ApolloServer({
     context: ({ req }) => {
         const { token } = req.headers;
         if (!token) throw new AuthenticationError('header values are incorrect');
-        const user = jwt.verify(token, 'my-secret-from-env-file-in-prod');
+        const user = jwt.verify(token, secret);
         if (!user) throw new AuthenticationError('you must be logged in');
         return { user };
     }
