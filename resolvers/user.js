@@ -1,6 +1,15 @@
 let { users, posts, follows } = require('../database/database');
 
 const resolvers = {
+    Mutation: {
+        mode: (parent, args, context) => {
+            const user = users.find(user => user.id === context.user.id);
+            if (!user) throw new Error('internal server error');
+            user.mode = (user.mode + 1) % 2;
+            return user;
+        }
+    },
+
     Query: {
         user: (parent, { id }, context) => {
             if (id !== undefined) {
@@ -15,6 +24,7 @@ const resolvers = {
     },
 
     User: {
+        id: (user) => user.id,
         username: (user) => user.username,
         email: (user,) => user.email,
         posts: (user, args, context) => {
@@ -28,7 +38,8 @@ const resolvers = {
             if (user.id !== context.user.id && !follows.find(follow => follow.followed === user.id && follow.follower === context.user.id))
                 permission = 0;
             return posts.filter(comment => comment.user === user.id && comment.post !== null && comment.mode <= permission);
-        }
+        },
+        mode: (user) => user.mode
     }
 };
 

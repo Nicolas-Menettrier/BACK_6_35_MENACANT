@@ -2,7 +2,7 @@ let { users, posts, follows } = require('../database/database');
 
 const resolvers = {
     Mutation: {
-        comment: async (parent, { postId, message, mode }, context) => {
+        comment: async (parent, { postId, message }, context) => {
             const post = posts.find(post => post.id === postId); // TODO REPLACE BY REAL DB
             if (!post) throw new Error('post not found');
             const user = users.find(user => user.id === post.user); // TODO REPLACE BY REAL DB
@@ -11,12 +11,14 @@ const resolvers = {
                 throw new Error('not allowed');
             const comment = {
                 'id': posts[posts.length - 1].id + 1,
-                'comment': message,
-                'post': post,
-                'user': user.id,
-                'mode': mode !== undefined ? mode : 0
+                'message': message,
+                'post': post.id,
+                'user': context.user.id,
+                'comments': true,
+                'mode': 0
             };
-            post.push(comment); // TODO REPLACE BY REAL DB
+            console.table(comment);
+            posts.push(comment); // TODO REPLACE BY REAL DB
             return comment;
         }
     },
@@ -54,7 +56,16 @@ const resolvers = {
     },
 
     Post: {
-        post: (comment) => posts.find(post => post.id === comment.post)
+        post: (comment, args, context) => {
+            if (comment.post === null) return null;
+            const post = posts.find(post => post.id === comment.post);
+            if (!post) throw new Error('post was removed');
+            const user = users.find(user => user.id === post.user);
+            if (!user) throw new Error('internal server error');
+            if (context.user.id !== user.id && (user.mode === 1 || post.mode === 1) && !follows.find(follow => follow.followed === user.id && follow.follower === context.user.id))
+                return null;
+            return post;
+        }
     }
 };
 
