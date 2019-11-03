@@ -1,5 +1,13 @@
 let { users, posts } = require('../database/database');
 const getPermission = require('../permissions');
+const options = {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit", 
+    minute: "2-digit", 
+    second: "2-digit" 
+};
 
 const resolvers = {
     Mutation: {
@@ -17,7 +25,8 @@ const resolvers = {
                 'post': post.id,
                 'user': context.user.id,
                 'comments': true,
-                'mode': 0
+                'mode': 0,
+                'date': new Date().toLocaleString("en-EN", options)
             };
             posts.push(comment); // TODO REPLACE BY REAL DB
             return comment;

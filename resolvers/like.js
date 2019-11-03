@@ -30,7 +30,7 @@ const resolvers = {
 
     Query: {
         likes: (parent, { userId }, context) => {
-            const user = database.users.find(user => user.id === userId);
+            const user = userId !== undefined ? database.users.find(user => user.id === userId) : context.user;
             if (!user) throw new Error('user not found');
             getPermission(context.user, user);
             const likes = database.likes.filter(like => like.user === user.id);
@@ -42,7 +42,7 @@ const resolvers = {
                     database.likes = database.likes.filter(l => l.id !== like.id);
                 }
             });
-            return { "count": posts.length, "posts": likedPosts };
+            return likedPosts;
         },
 
         liked: (parent, { postId }, context) => {
@@ -58,7 +58,7 @@ const resolvers = {
                 if (user) likeUsers.push(user);
                 else database.likes = database.likes.filter(l => l.id !== like.id);
             });
-            return { "count": likeUsers.length, "users": likeUsers };
+            return likeUsers;
         }
     },
 
@@ -66,16 +66,6 @@ const resolvers = {
         id: (like) => like.id,
         post: (like) => database.posts.find(post => post.id === like.post),
         user: (like) => database.users.find(user => user.id === like.user)
-    },
-
-    Likes: {
-        count: (likes) => likes.count,
-        posts: (likes) => likes.posts
-    },
-
-    Liked: {
-        count: (likes) => likes.count,
-        users: (likes) => likes.users
     }
 };
 

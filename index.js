@@ -19,7 +19,7 @@ app.post('/api/authentication', (req, res) => {
     if (!email || !password) return res.status(400).json({ message: 'body values are incorrect' });
     const user = database.users.find(user => user.email === email && user.password === password);
     if (!user) return res.status(401).json({ message: 'wrong email or password' });
-    const token = jwt.sign(user, secret, { expiresIn: '1200s' });
+    const token = jwt.sign(user, secret);
     return res.json({ token });
 });
 

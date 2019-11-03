@@ -1,5 +1,13 @@
-let { users, posts, likes } = require('../database/database');
+let { users, posts, likes, reposts } = require('../database/database');
 const getPermission = require('../permissions');
+const options = {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit", 
+    minute: "2-digit", 
+    second: "2-digit" 
+};
 
 const resolvers = {
     Mutation: {
@@ -11,7 +19,8 @@ const resolvers = {
                 'user': context.user.id,
                 'mode': mode !== undefined ? mode : 0,
                 'comments': comments !== undefined ? comments : true,
-                'post': null
+                'post': null,
+                'date': new Date().toLocaleString("en-EN", options)
             };
             posts.push(post); // TODO REPLACE BY REAL DB
             return post;
@@ -63,7 +72,10 @@ const resolvers = {
         id: (post) => post.id,
         message: (post) => post.message,
         user: (post) => users.find(user => user.id === post.user),
-        comments: (post) => posts.filter(comment => comment.post === post.id),
+        comments: (post) => {
+            const postComments = posts.filter(comment => comment.post === post.id);
+            return { "count": postComments.length, "posts": postComments };
+        },
         mode: (post) => post.mode,
         likes: (post) => {
             const user = users.find(user => user.id === post.user);
@@ -71,12 +83,30 @@ const resolvers = {
             const postLikes = likes.filter(like => like.post === post.id);
             let likeUsers = [];
             postLikes.forEach(like => {
-                const user = users.find(user => user.id === like.id);
+                const user = users.find(user => user.id === like.user);
                 if (user) likeUsers.push(user);
                 else likes = likes.filter(l => l.id !== like.id);
             });
             return { "count": likeUsers.length, "users": likeUsers };
-        }
+        },
+        reposts: (post) => {
+            const user = users.find(user => user.id === post.user);
+            if (!user) throw new Error('internal server error');
+            const postReposts = reposts.filter(repost => repost.post === post.id);
+            let repostUsers = [];
+            postReposts.forEach(repost => {
+                const user = users.find(user => user.id === repost.user);
+                if (user) repostUsers.push(user);
+                else reposts = reposts.filter(l => l.id !== repost.id);
+            });
+            return { "count": repostUsers.length, "users": repostUsers };
+        },
+        date: (post) => post.date
+    },
+
+    Posts: {
+        count: (posts) => posts.count,
+        posts: (posts) => posts.posts
     }
 };
 

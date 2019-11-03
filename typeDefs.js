@@ -6,10 +6,17 @@ const typeDefs = gql`
     email: String!
     username: String!
     description: String
-    all: [Post]
-    posts: [Post]
-    comments: [Post]
+    all: Posts
+    posts: Posts
+    comments: Posts
     mode: Int!
+    likes: Posts
+    reposts: Posts
+  }
+
+  type Users {
+    count: Int!
+    users: [User]    
   }
 
   type Post {
@@ -17,19 +24,16 @@ const typeDefs = gql`
     message: String!
     user: User!
     post: Post
-    comments: [Post]
+    comments: Posts
     mode: Int!
-    likes: Liked
+    likes: Users
+    reposts: Users
+    date: String!
   }
 
-  type Likes {
+  type Posts {
     count: Int!
     posts: [Post]
-  }
-
-  type Liked {
-    count: Int!
-    users: [User]
   }
 
   type Like {
@@ -52,6 +56,8 @@ const typeDefs = gql`
     comment(postId: Int!, message: String!): Post!
     like(postId: Int!): Like!
     unlike(postId: Int!): Like!
+    repost(postId: Int!): Like!
+    unrepost(postId: Int!): Like!
     follow(userId: Int!): Follow!
     unfollow(userId: Int!): Follow!
   }
@@ -64,8 +70,10 @@ const typeDefs = gql`
     all(userId: Int): [Post]!
     comment(id: Int!): Post!
     comments(userId: Int, postId: Int): [Post]!
-    likes(userId: Int): Likes!
-    liked(postId: Int): Liked!
+    likes(userId: Int): [Post]!
+    liked(postId: Int!): [User]!
+    reposts(userId: Int): [Post]!
+    reposted(postId: Int!): [User]!
     follows(userId: Int): [User]!
     followers(userId: Int): [User]!
   }

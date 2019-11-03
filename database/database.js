@@ -33,6 +33,7 @@ const database = {
             'post': null,
             'mode': 0,
             'comments': true,
+            'date': '11/01/2019 09:44 PM'
         },
         {
             'id': 1,
@@ -40,7 +41,8 @@ const database = {
             'user': 1,
             'post': null,
             'mode': 0,
-            'comments': true
+            'comments': true,
+            'date': '11/01/2019 11:12 PM'
         },
         {
             'id': 2,
@@ -48,7 +50,8 @@ const database = {
             'user': 0,
             'post': null,
             'mode': 1,
-            'comments': true
+            'comments': true,
+            'date': '11/02/2019 04:44 AM'
         },
         {
             'id': 3,
@@ -56,7 +59,8 @@ const database = {
             'user': 2,
             'post': null,
             'mode': 0,
-            'comments': false
+            'comments': false,
+            'date': '11/02/2019 08:09 AM'
         },
         {
             'id': 4,
@@ -64,7 +68,8 @@ const database = {
             'user': 1,
             'post': 0,
             'mode': 0,
-            'comments': false
+            'comments': false,
+            'date': '11/03/2019 01:12 PM'
         },
         {
             'id': 5,
@@ -72,7 +77,8 @@ const database = {
             'user': 0,
             'post': 1,
             'mode': 0,
-            'comments': false
+            'comments': false,
+            'date': '11/03/2019 10:44 PM'
         }
     ],
     follows: [
@@ -93,6 +99,28 @@ const database = {
         }
     ],
     likes: [
+        {
+            'id': 0,
+            'post': 0,
+            'user': 1
+        },
+        {
+            'id': 1,
+            'post': 0,
+            'user': 1
+        },
+        {
+            'id': 2,
+            'post': 0,
+            'user': 2
+        },
+        {
+            'id': 3,
+            'post': 0,
+            'user': 2
+        }
+    ],
+    reposts: [
         {
             'id': 0,
             'post': 0,
