@@ -6,9 +6,9 @@ const typeDefs = gql`
     email: String!
     username: String!
     description: String
-    all: Posts
-    posts: Posts
-    comments: Posts
+    all: [Post]
+    posts: [Post]
+    comments: [Post]
     mode: Int!
     likes: Posts
     reposts: Posts
@@ -24,7 +24,7 @@ const typeDefs = gql`
     message: String!
     user: User!
     post: Post
-    comments: Posts
+    comments: [Post]
     mode: Int!
     likes: Users
     reposts: Users

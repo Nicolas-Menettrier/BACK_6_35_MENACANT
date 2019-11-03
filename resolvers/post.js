@@ -74,7 +74,7 @@ const resolvers = {
         user: (post) => users.find(user => user.id === post.user),
         comments: (post) => {
             const postComments = posts.filter(comment => comment.post === post.id);
-            return { "count": postComments.length, "posts": postComments };
+            return postComments;
         },
         mode: (post) => post.mode,
         likes: (post) => {

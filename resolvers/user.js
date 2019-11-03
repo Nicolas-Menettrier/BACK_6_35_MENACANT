@@ -43,17 +43,17 @@ const resolvers = {
         all: (user, args, context) => {
             const permission = getPermission(context.user, user);
             const userPosts = posts.filter(post => post.user === user.id && post.mode <= permission);
-            return { "count": userPosts.length, "posts": userPosts };
+            return userPosts;
         },
         posts: (user, args, context) => {
             const permission = getPermission(context.user, user);
             const userPosts = posts.filter(post => post.user === user.id && post.post === null && post.mode <= permission);
-            return { "count": userPosts.length, "posts": userPosts };
+            return userPosts;
         },
         comments: (user, args, context) => {
             const permission = getPermission(context.user, user);
             const userComments = posts.filter(comment => comment.user === user.id && comment.post !== null && comment.mode <= permission);
-            return { "count": userComments.length, "posts": userComments };
+            return userComments;
         },
         description: (user) => user.description,
         mode: (user) => user.mode,
