@@ -1,4 +1,4 @@
-let { users, posts, likes } = require('../database/database');
+const database = require('../database/database');
 const getPermission = require('../permissions');
 
 const resolvers = {
@@ -13,17 +13,19 @@ const resolvers = {
                 'comments': comments !== undefined ? comments : true,
                 'post': null
             };
-            posts.push(post); // TODO REPLACE BY REAL DB
+            const db = await database();
+            db.collection("posts").insertOne(post);
             return post;
         },
 
         removePost: async (parent, { id }, context) => {
-            const post = posts.find(post => post.id === id);
+            const db = await database();
+            const post = await db.collection("posts").find({ id });
             if (!post) throw new Error('not found');
-            const user = users.find(user => user.id === post.user);
+            const user = await db.collection("users").find({ id: post.user });
             if (!user) throw new Error('internal server error');
             if (user.id !== context.user.id) throw new Error('not allowed');
-            posts = posts.filter(p => p.id !== post.id);
+            posts = posts.filter(p => p.id !== post.id); // TODO REPLACE BY REAL DB
             return post;
         }
     },
